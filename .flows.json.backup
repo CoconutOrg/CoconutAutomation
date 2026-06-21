@@ -8,6 +8,37 @@
         "env": []
     },
     {
+        "id": "ba9c12137d6be7d0",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "mosquitto",
+        "port": 1883,
+        "clientid": "nodered",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": false,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
         "id": "b0b6bcf31dc1465c",
         "type": "debug",
         "z": "0ada27d6fcef3719",
@@ -16,11 +47,178 @@
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "false",
+        "complete": "true",
+        "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 240,
-        "y": 140,
+        "x": 340,
+        "y": 420,
         "wires": []
+    },
+    {
+        "id": "979eb9552fce9537",
+        "type": "e-mail",
+        "z": "0ada27d6fcef3719",
+        "server": "smtp.gmail.com",
+        "port": "465",
+        "authtype": "BASIC",
+        "saslformat": true,
+        "token": "oauth2Response.access_token",
+        "secure": true,
+        "tls": true,
+        "name": "",
+        "dname": "Send registration confirmation",
+        "x": 1110,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "eb35a0c2bd0fc7df",
+        "type": "inject",
+        "z": "0ada27d6fcef3719",
+        "name": "",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            },
+            {
+                "p": "to",
+                "v": "l.lominadze2927@gmail.com",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "Registration Confirmation",
+        "x": 230,
+        "y": 240,
+        "wires": [
+            [
+                "7e4aafef527799d5"
+            ]
+        ]
+    },
+    {
+        "id": "7e4aafef527799d5",
+        "type": "template",
+        "z": "0ada27d6fcef3719",
+        "name": "set payload",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "<div style=\"font-family: 'Inter', sans-serif; margin: 0; padding: 0; box-sizing: border-box;\">\n        <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"max-width: 540px; margin: 0 auto; background-color: #faf8f7; border-radius: 24px; box-shadow: 0px 8px 10px rgba(121, 85, 72, 0.26);\">\n            <tr>\n                <td align=\"center\" style=\"padding: 32px 24px;\">\n                    \n                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n                        <tr>\n                            <td align=\"center\" style=\"padding-bottom: 16px;\">\n                                <h1 style=\"color: #795548; font-size: 24px; font-weight: 700; margin: 0 0 12px 0;\">Thanks for registering on Coconut!</h1>\n                                <img src=\"https://raw.githubusercontent.com/CoconutOrg/CoconutSite/refs/heads/main/src/assets/coconut_icon.svg\" style=\"width: 200px;\" alt=\"Coconut Logo\" />\n                            </td>\n                        </tr>\n                    </table>\n\n                    <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\">\n                        <tr>\n                            <td align=\"center\" style=\"padding: 0 10px;\">\n                                <p style=\"color: #9b8477; font-size: 15px; margin: 0 0 24px 0; line-height: 1.5;\">\n                                    To confirm your account, go to <a style=\"color: #dd1a5b; font-weight: bold; text-decoration: underline;\" href=\"http://192.168.100.88:4000/users/register/confirm?code={{ payload.code }}&email={{ payload.email }}\">this link</a>. The link will be active for 3 minutes.\n                                </p>\n                                <p style=\"color: #a1a1a1; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin: 0;\">\n                                    IF THIS IS NOT YOUR ACCOUNT - Ignore this email!\n                                </p>\n                            </td>\n                        </tr>\n                    </table>\n\n                </td>\n            </tr>\n        </table>\n    </div>",
+        "output": "str",
+        "x": 510,
+        "y": 240,
+        "wires": [
+            [
+                "c881a9afd315cd6b"
+            ]
+        ]
+    },
+    {
+        "id": "f84049c1bc8dd29a",
+        "type": "mqtt in",
+        "z": "0ada27d6fcef3719",
+        "name": "",
+        "topic": "user",
+        "qos": "1",
+        "datatype": "auto-detect",
+        "broker": "ba9c12137d6be7d0",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 130,
+        "y": 340,
+        "wires": [
+            [
+                "96ed2fe33e7c39d9",
+                "b0b6bcf31dc1465c"
+            ]
+        ]
+    },
+    {
+        "id": "96ed2fe33e7c39d9",
+        "type": "switch",
+        "z": "0ada27d6fcef3719",
+        "name": "",
+        "property": "payload.subtopic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Register",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 310,
+        "y": 340,
+        "wires": [
+            [
+                "7e4aafef527799d5"
+            ]
+        ]
+    },
+    {
+        "id": "c881a9afd315cd6b",
+        "type": "change",
+        "z": "0ada27d6fcef3719",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "topic",
+                "pt": "msg",
+                "to": "Registration Confirmation",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 690,
+        "y": 240,
+        "wires": [
+            [
+                "ba49278191805c9e"
+            ]
+        ]
+    },
+    {
+        "id": "ba49278191805c9e",
+        "type": "change",
+        "z": "0ada27d6fcef3719",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "to",
+                "pt": "msg",
+                "to": "l.lominadze2927@gmail.com",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 870,
+        "y": 240,
+        "wires": [
+            [
+                "979eb9552fce9537"
+            ]
+        ]
     }
 ]
